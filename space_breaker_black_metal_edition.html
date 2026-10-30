@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPACE BREAKER — Black Metal Edition</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px 12px;
+    background: #030408;
+    color: #e2e8f0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, #2e080e 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, #170308 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #game-shell {
+    width: 100%;
+    max-width: 520px;
+    margin: auto;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .logo {
+    font-size: clamp(20px, 4.5vw, 26px);
+    font-weight: 950;
+    letter-spacing: 2px;
+    color: #f8fafc;
+    text-shadow: 0 0 10px #ff0033, 0 0 25px #ff003366;
+  }
+  .sub {
+    font-size: 11px;
+    color: #94a3b8;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+  /* WEATHER BANNER STYLING */
+  .weather-banner {
+    background: linear-gradient(135deg, #0f1322, #1f0b14);
+    border: 1px solid #3f121a;
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #cbd5e1;
+    box-shadow: 0 2px 10px rgba(255, 0, 51, 0.12);
+  }
+  .weather-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .weather-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .weather-temp {
+    font-weight: 900;
+    font-size: 16px;
+    color: #ff4d6d;
+    text-shadow: 0 0 8px rgba(255, 77, 109, 0.4);
+  }
+  .weather-extra {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 700;
+  }
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #0d0f17, #18090e);
+    border: 1px solid #3f121a;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 20px #ff002215;
+  }
+  .muted { font-size: 11px; color: #64748b; font-weight: 700; }
+  .num { font-weight: 900; font-size: 18px; }
+  .btn {
+    border: 1px solid #4a1520;
+    background: linear-gradient(135deg, #1f080e, #3b0a13);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn:hover {
+    border-color: #ff2244;
+    box-shadow: 0 0 12px #ff003355;
+  }
+  .btn:active { transform: scale(0.97); }
+  #stage { position: relative; width: 100%; }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+    border: 1px solid #331018;
+    border-radius: 12px;
+    box-shadow: 0 0 30px #ff002220;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(3, 4, 8, 0.88);
+    backdrop-filter: blur(4px);
+    text-align: center;
+    padding: 24px;
+    border-radius: 12px;
+  }
+  #overlay h2 {
+    font-size: clamp(22px, 5vw, 28px);
+    margin: 8px 0;
+    color: #fff;
+    text-shadow: 0 0 16px #ff0033;
+  }
+  #overlay p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #cbd5e1;
+    margin: 10px 0 20px;
+  }
+  .guide {
+    margin-top: 10px;
+    background: #090b12;
+    border: 1px solid #1e2638;
+    border-radius: 11px;
+    padding: 11px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+<div id="game-shell">
+  <div class="top">
+    <div>
+      <div class="logo">SPACE BREAKER</div>
+      <div class="sub">BLACK METAL · STEALTH INTERCEPTOR</div>
+    </div>
+    <div style="text-align:right">
+      <div class="muted">SCORE</div>
+      <div id="score" class="num" style="color:#ff3355">0000</div>
+    </div>
+  </div>
+
+  <!-- SEOUL WEATHER BANNER -->
+  <div class="weather-banner">
+    <div class="weather-info">
+      <span style="font-weight:800; color:#94a3b8">📍 SEOUL HQ WEATHER</span>
+      <span id="weather-icon" style="font-size:16px">🌤️</span>
+      <span id="weather-desc" style="font-weight:700">정보 수신 중...</span>
+    </div>
+    <div class="weather-details">
+      <div id="weather-temp" class="weather-temp">--°C</div>
+      <div id="weather-effect" style="font-size:10px; font-weight:800; color:#ffaa00">속도 계산 중...</div>
+    </div>
+  </div>
+
+  <!-- MANUAL TEMPERATURE TEST PANEL -->
+  <div style="background: rgba(15, 23, 42, 0.8); border: 1px dashed #3f121a; border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <span style="font-weight: 800; color: #ff3355;">🧪 기온 테스트 제어판</span>
+      <button id="btn-fetch-real" class="btn" style="padding: 4px 8px; font-size: 10px; background: #1a233a;">🔄 실시간 날씨 연동</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <input type="range" id="temp-range" min="-10" max="40" value="18" style="flex: 1; accent-color: #ff3355; cursor: pointer;">
+      <input type="number" id="temp-input" min="-10" max="40" value="18" style="width: 55px; background: #030408; border: 1px solid #3f121a; border-radius: 6px; color: #f8fafc; font-weight: 800; text-align: center; padding: 4px;">
+      <span style="font-weight: 800; color: #cbd5e1;">°C</span>
+      <button id="btn-apply-temp" class="btn" style="padding: 6px 12px; font-size: 11px;">적용</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div>
+      <div class="muted">LIVES</div>
+      <div id="lives" class="num" style="color:#ff2a4b">▲ ▲ ▲</div>
+    </div>
+    <div>
+      <div class="muted">HOSTILE FLEET</div>
+      <div id="enemy-count" class="num" style="color:#f8fafc">32</div>
+    </div>
+    <div style="text-align:right">
+      <div class="muted">ACTIVE BALLS</div>
+      <div id="ball-count" class="num" style="color:#ff8866">1</div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <canvas id="game" width="520" height="680"></canvas>
+    <div id="overlay">
+      <div>
+        <div id="emoji" style="font-size:44px">⚡</div>
+        <h2 id="title">BLACK METAL INVASION</h2>
+        <p id="msg">칠흑의 스텔스 전투기로 적 적함을 격파하세요.<br>시간이 지날수록 공 속도와 적 하강이 가속됩니다.</p>
+        <button id="start" class="btn" style="padding:12px 28px; font-size:14px;">ENGAGE MISSION</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:8px; margin-top:10px">
+    <button id="pause" class="btn" style="flex:1">Ⅱ PAUSE</button>
+    <button id="reset" class="btn" style="flex:1">↻ RESTART</button>
+  </div>
+
+  <div class="guide">
+    <b style="color:#ff3355">✦ PILOT TACTICS</b><br>
+    · 마우스/터치로 <b>블랙 메탈 전투기</b>를 조종하세요.<br>
+    · 대형 적함들이 방어선으로 서서히 전진합니다.<br>
+    · 점수를 얻거나 시간이 지나면 최대 6개까지 공이 복제됩니다!
+  </div>
+</div>
+
+<script>
+let weatherSpeedMultiplier = 1.0;
+let weatherStatusMsg = "기초 분석 완료. 작전을 개시하십시오.";
+
+// Apply temperature parameters directly
+function applyTemperatureSetting(temp, descCustom = null, iconCustom = null) {
+  let effectText = "";
+  let icon = iconCustom || (temp >= 25 ? '🔥' : (temp < 10 ? '❄️' : '🌤️'));
+  let desc = descCustom || (temp >= 25 ? '폭염' : (temp < 10 ? '한파' : '적정 기온'));
+
+  if (temp >= 25) {
+    weatherSpeedMultiplier = 1.3;
+    effectText = "🔥 폭염 경보: 공 속도 1.3x 가속!";
+    weatherStatusMsg = `설정 기온 ${temp}°C (고온 현상) — 공 속도가 1.3배 증가합니다!`;
+  } else if (temp < 10) {
+    weatherSpeedMultiplier = 0.75;
+    effectText = "❄️ 한파 영향: 공 속도 0.75x 감속!";
+    weatherStatusMsg = `설정 기온 ${temp}°C (저온 현상) — 공 속도가 0.75배 감속합니다!`;
+  } else {
+    weatherSpeedMultiplier = 1.0;
+    effectText = "🟢 적정 기온: 공 속도 1.0x Normal";
+    weatherStatusMsg = `설정 기온 ${temp}°C (쾌적) — 표준 공 속도로 발사됩니다.`;
+  }
+
+  document.getElementById('weather-icon').textContent = icon;
+  document.getElementById('weather-desc').textContent = desc;
+  document.getElementById('weather-temp').textContent = `${temp}°C`;
+  document.getElementById('weather-effect').textContent = effectText;
+  
+  document.getElementById('temp-range').value = temp;
+  document.getElementById('temp-input').value = temp;
+
+  updateStartOverlayMsg();
+}
+
+// Fetch Seoul Weather using Open-Meteo API with Fallback
+async function fetchSeoulWeather() {
+  try {
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true');
+    if (!res.ok) throw new Error('Network error');
+    const data = await res.json();
+    if (data && data.current_weather) {
+      const temp = Math.round(data.current_weather.temperature);
+      const code = data.current_weather.weathercode;
+      const { icon, desc } = getWeatherMeta(code);
+
+      applyTemperatureSetting(temp, desc, icon);
+    } else {
+      throw new Error('Invalid weather data');
+    }
+  } catch (e) {
+    applyTemperatureSetting(18, '맑음 (대체 모드)', '☀️');
+    weatherStatusMsg = "서울 날씨 연동 실패로 기본 환경(18°C)으로 작전을 수행합니다.";
+    updateStartOverlayMsg();
+  }
+}
+
+// Event Listeners for Manual Temperature UI Controls
+document.getElementById('temp-range').addEventListener('input', (e) => {
+  document.getElementById('temp-input').value = e.target.value;
+});
+
+document.getElementById('temp-input').addEventListener('input', (e) => {
+  let val = Math.max(-10, Math.min(40, Number(e.target.value) || 0));
+  document.getElementById('temp-range').value = val;
+});
+
+document.getElementById('btn-apply-temp').addEventListener('click', () => {
+  const temp = Number(document.getElementById('temp-input').value);
+  applyTemperatureSetting(temp);
+});
+
+document.getElementById('btn-fetch-real').addEventListener('click', () => {
+  fetchSeoulWeather();
+});
+
+function updateStartOverlayMsg() {
+  const msgEl = document.getElementById('msg');
+  if (msgEl) {
+    msgEl.innerHTML = `<b>[HQ BRIEFING]</b> ${weatherStatusMsg}<br>칠흑의 스텔스 전투기로 적 적함을 격파하세요!`;
+  }
+}
+
+function getWeatherMeta(code) {
+  if (code === 0) return { icon: '☀️', desc: '맑음' };
+  if (code >= 1 && code <= 3) return { icon: '⛅', desc: '구름 조금' };
+  if (code >= 45 && code <= 48) return { icon: '🌫️', desc: '안개' };
+  if (code >= 51 && code <= 67) return { icon: '🌧️', desc: '비' };
+  if (code >= 71 && code <= 77) return { icon: '❄️', desc: '눈' };
+  if (code >= 80 && code <= 82) return { icon: '🌦️', desc: '소나기' };
+  if (code >= 95) return { icon: '🌩️', desc: '뇌우' };
+  return { icon: '🌤️', desc: '맑음' };
+}
+
+fetchSeoulWeather();
+
+// GAME LOGIC
+(()=>{
+  const $ = id => document.getElementById(id);
+  const cv = $('game'), c = cv.getContext('2d');
+  const W = 520, H = 680;
+
+  let score = 0, lives = 3, running = false, ended = false;
+  let balls = [], ships = [], particles = [], rings = [], stars = [];
+  let paddle = { x: 210, y: 628, w: 100, h: 16 };
+  let last = 0, elapsed = 0, lastSplitTime = 0, lastScoreSplit = 0, shake = 0, launch = true;
+
+  // Starfield Setup
+  for(let i = 0; i < 110; i++){
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.4 + Math.random() * 1.4,
+      a: 0.15 + Math.random() * 0.7,
+      speed: 0.15 + Math.random() * 0.5
+    });
+  }
+
+  function hud(){
+    $('score').textContent = String(score).padStart(4, '0');
+    $('lives').textContent = lives ? '▲ '.repeat(lives).trim() : '—';
+    $('enemy-count').textContent = ships.filter(s => s.alive).length;
+    $('ball-count').textContent = balls.length;
+  }
+
+  function overlay(e, t, m, b){
+    $('overlay').style.display = 'flex';
+    $('emoji').textContent = e;
+    $('title').textContent = t;
+    $('msg').innerHTML = m;
+    $('start').textContent = b;
+  }
+
+  function hide(){ $('overlay').style.display = 'none'; }
+
+  function makeShip(x, y, row){
+    const hp = (row === 0) ? 3 : (row < 2 ? 2 : 1);
+    return {
+      x, y, w: 52, h: 30,
+      hp: hp,
+      maxHp: hp,
+      alive: true,
+      phase: Math.random() * 6.28,
+      drift: (Math.random() - 0.5) * 0.35
+    };
+  }
+
+  function initFleet(){
+    ships = [];
+    const cols = 8, rows = 4;
+    const startX = 18, startY = 55;
+    const spacingX = 60, spacingY = 42;
+
+    for(let r = 0; r < rows; r++){
+      for(let c = 0; c < cols; c++){
+        ships.push(makeShip(startX + c * spacingX, startY + r * spacingY, r));
+      }
+    }
+  }
+
+  function reset(){
+    score = 0; lives = 3; running = false; ended = false;
+    balls = []; particles = []; rings = []; shake = 0;
+    elapsed = 0; lastSplitTime = 0; lastScoreSplit = 0; launch = true;
+    
+    paddle = { x: 210, y: 628, w: 100, h: 16 };
+    balls.push({ x: 260, y: 610, vx: 2.8, vy: -4.8, r: 6 });
+    
+    initFleet();
+    hud();
+    overlay('⚡', 'BLACK METAL INVASION', `<b>[HQ BRIEFING]</b> ${weatherStatusMsg}<br>칠흑의 스텔스 전투기로 적 적함을 격파하세요!`, 'ENGAGE MISSION');
+  }
+
+  function createSparks(x, y, color = '#ff3344', count = 12, speedMult = 3){
+    for(let i = 0; i < count; i++){
+      const angle = Math.random() * Math.PI * 2;
+      const spd = (0.8 + Math.random() * speedMult);
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        life: 14 + Math.random() * 18,
+        maxLife: 32,
+        size: 1 + Math.random() * 2.2,
+        color
+      });
+    }
+  }
+
+  function createExplosion(x, y){
+    createSparks(x, y, '#ffffff', 14, 5);
+    createSparks(x, y, '#ff2244', 18, 4);
+    createSparks(x, y, '#ff9900', 12, 3);
+    rings.push({ x, y, r: 4, maxR: 32, life: 18, maxLife: 18, color: '#ff2244' });
+    rings.push({ x, y, r: 2, maxR: 20, life: 12, maxLife: 12, color: '#ffffff' });
+    shake = 7;
+  }
+
+  function duplicateBall(sourceBall){
+    if(balls.length >= 6) return;
+    const angle = (Math.random() * 0.8 + 0.2) * (Math.random() < 0.5 ? -1 : 1);
+    const speed = Math.max(4.8, Math.hypot(sourceBall.vx, sourceBall.vy));
+    balls.push({
+      x: sourceBall.x,
+      y: sourceBall.y,
+      vx: Math.sin(angle) * speed,
+      vy: -Math.abs(Math.cos(angle) * speed),
+      r: sourceBall.r
+    });
+    createSparks(sourceBall.x, sourceBall.y, '#ffffff', 14, 4);
+  }
+
+  function start(){
+    if(ended) reset();
+    running = true; launch = false;
+    hide();
+    last = performance.now();
+  }
+
+  function movePaddle(clientX){
+    const r = cv.getBoundingClientRect();
+    const scale = W / r.width;
+    const targetX = (clientX - r.left) * scale - paddle.w / 2;
+    paddle.x = Math.max(0, Math.min(W - paddle.w, targetX));
+    if(launch && balls.length){
+      balls[0].x = paddle.x + paddle.w / 2;
+      balls[0].y = paddle.y - 18;
+    }
+  }
+
+  cv.addEventListener('pointermove', e => movePaddle(e.clientX));
+  cv.addEventListener('pointerdown', e => {
+    movePaddle(e.clientX);
+    if(!running && !ended) start();
+  });
+
+  $('start').addEventListener('click', start);
+  $('reset').addEventListener('click', reset);
+  $('pause').addEventListener('click', () => {
+    if(running){
+      running = false;
+      overlay('⏸️', 'MISSION PAUSED', '전열을 정비하고 출격 준비가 되면 재개하세요.', 'RESUME MISSION');
+    } else if(!ended) start();
+  });
+
+  function update(dt){
+    elapsed += dt / 60;
+    
+    // Controlled Ball Duplication (Every 25s)
+    if(elapsed - lastSplitTime >= 25){
+      lastSplitTime = elapsed;
+      if(balls.length > 0 && balls.length < 6){
+        duplicateBall(balls[0]);
+      }
+    }
+
+    // Controlled Ball Duplication (Every 100 Points)
+    if(score >= lastScoreSplit + 100){
+      lastScoreSplit = Math.floor(score / 100) * 100;
+      if(balls.length > 0 && balls.length < 6){
+        duplicateBall(balls[0]);
+      }
+    }
+
+    // Weather Speed Multiplier applied here
+    const speedFactor = (1 + (elapsed * 0.015)) * weatherSpeedMultiplier;
+
+    // Enemy fleet slow descent
+    const descendSpeed = (0.1 + elapsed * 0.004) * dt;
+    let breached = false;
+
+    for(const s of ships){
+      if(!s.alive) continue;
+      s.y += descendSpeed;
+      s.x += Math.sin(elapsed * 1.8 + s.phase) * s.drift * dt;
+
+      if(s.y + s.h >= paddle.y - 8){
+        breached = true;
+        s.alive = false;
+        createExplosion(s.x + s.w / 2, s.y + s.h / 2);
+      }
+    }
+
+    if(breached){
+      lives--;
+      shake = 12;
+      hud();
+      if(lives <= 0){
+        running = false;
+        ended = true;
+        overlay('☠️', 'DEFENSE BREACHED', '최종 점수: ' + score + '<br>적 함대가 방어선을 점령했습니다.', 'RETRY MISSION');
+      }
+    }
+
+    // Balls logic
+    for(let i = balls.length - 1; i >= 0; i--){
+      const b = balls[i];
+      b.x += b.vx * speedFactor * dt;
+      b.y += b.vy * speedFactor * dt;
+
+      // Wall Bounce
+      if(b.x < b.r){ b.x = b.r; b.vx = Math.abs(b.vx); createSparks(b.x, b.y, '#ff3344', 6, 2); }
+      if(b.x > W - b.r){ b.x = W - b.r; b.vx = -Math.abs(b.vx); createSparks(b.x, b.y, '#ff3344', 6, 2); }
+      if(b.y < b.r){ b.y = b.r; b.vy = Math.abs(b.vy); createSparks(b.x, b.y, '#ffaa00', 6, 2); }
+
+      // Paddle Bounce
+      if(b.vy > 0 && b.y + b.r >= paddle.y && b.y - b.r <= paddle.y + paddle.h && b.x >= paddle.x && b.x <= paddle.x + paddle.w){
+        b.y = paddle.y - b.r;
+        b.vy = -Math.abs(b.vy);
+        const offset = (b.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+        b.vx = Math.max(-5.5, Math.min(5.5, offset * 5.2));
+        if(Math.abs(b.vx) < 0.8) b.vx = b.vx < 0 ? -0.8 : 0.8;
+        
+        createSparks(b.x, b.y, '#ffffff', 10, 3);
+        createSparks(b.x, b.y, '#ff2244', 8, 2);
+      }
+
+      // Ship Collision
+      for(const s of ships){
+        if(!s.alive) continue;
+        if(b.x + b.r > s.x && b.x - b.r < s.x + s.w && b.y + b.r > s.y && b.y - b.r < s.y + s.h){
+          const oldX = b.x - b.vx * speedFactor * dt;
+          if(oldX + b.r <= s.x || oldX - b.r >= s.x + s.w) b.vx *= -1;
+          else b.vy *= -1;
+
+          s.hp--;
+          if(s.hp <= 0){
+            s.alive = false;
+            score += 10;
+            createExplosion(s.x + s.w/2, s.y + s.h/2);
+            
+            // Re-spawn wave if empty
+            if(ships.filter(s => s.alive).length === 0){
+              initFleet();
+            }
+          } else {
+            createSparks(b.x, b.y, '#ffffff', 8, 2);
+            createSparks(b.x, b.y, '#ff3355', 6, 2);
+          }
+          hud();
+          break;
+        }
+      }
+
+      // Out of bounds
+      if(b.y - b.r > H){
+        balls.splice(i, 1);
+        if(balls.length === 0){
+          lives--;
+          hud();
+          if(lives <= 0){
+            running = false;
+            ended = true;
+            overlay('☠️', 'INTERCEPTOR LOST', '최종 점수: ' + score + '<br>기록 갱신에 다시 도전하세요.', 'RETRY MISSION');
+          } else {
+            balls.push({ x: paddle.x + paddle.w / 2, y: paddle.y - 18, vx: 2.8, vy: -4.8, r: 6 });
+            launch = false;
+          }
+        }
+      }
+    }
+
+    // Particle Updates
+    for(let i = particles.length - 1; i >= 0; i--){
+      const p = particles[i];
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vx *= Math.pow(0.96, dt);
+      p.vy *= Math.pow(0.96, dt);
+      p.life -= dt;
+      if(p.life <= 0) particles.splice(i, 1);
+    }
+
+    // Rings Updates
+    for(let i = rings.length - 1; i >= 0; i--){
+      const r = rings[i];
+      r.r += (r.maxR - r.r) * 0.18 * dt;
+      r.life -= dt;
+      if(r.life <= 0) rings.splice(i, 1);
+    }
+
+    shake *= Math.pow(0.8, dt);
+  }
+
+  function drawShip(s){
+    c.save();
+    c.translate(s.x + s.w / 2, s.y + s.h / 2);
+    
+    // Hull Base (Dark Armored Metallic)
+    c.fillStyle = '#11141c';
+    c.strokeStyle = '#384152';
+    c.lineWidth = 1.5;
+    
+    c.beginPath();
+    c.moveTo(0, s.h * 0.5);
+    c.lineTo(s.w * 0.48, s.h * 0.2);
+    c.lineTo(s.w * 0.42, -s.h * 0.4);
+    c.lineTo(0, -s.h * 0.5);
+    c.lineTo(-s.w * 0.42, -s.h * 0.4);
+    c.lineTo(-s.w * 0.48, s.h * 0.2);
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // Red Sensor Eye
+    const eyeAlpha = 0.6 + 0.4 * Math.sin(performance.now() * 0.005 + s.phase);
+    c.fillStyle = `rgba(255, 0, 51, ${eyeAlpha})`;
+    c.shadowColor = '#ff0033';
+    c.shadowBlur = 8;
+    c.fillRect(-8, -2, 16, 4);
+    c.shadowBlur = 0;
+
+    // HP Bar Indicator
+    if(s.maxHp > 1){
+      c.fillStyle = '#ff2244';
+      c.fillRect(-s.w * 0.3, s.h * 0.35, (s.w * 0.6) * (s.hp / s.maxHp), 3);
+    }
+
+    c.restore();
+  }
+
+  function drawPaddle(){
+    c.save();
+    c.translate(paddle.x + paddle.w / 2, paddle.y + paddle.h / 2);
+
+    // Thruster Flames
+    c.fillStyle = '#ff2200';
+    c.shadowColor = '#ff3300';
+    c.shadowBlur = 12;
+    c.beginPath();
+    c.moveTo(-16, paddle.h * 0.4);
+    c.lineTo(-10, paddle.h * 0.4 + 8 + Math.random() * 5);
+    c.lineTo(-4, paddle.h * 0.4);
+    c.moveTo(4, paddle.h * 0.4);
+    c.lineTo(10, paddle.h * 0.4 + 8 + Math.random() * 5);
+    c.lineTo(16, paddle.h * 0.4);
+    c.fill();
+
+    // Jet Main Body (Gunmetal / Pitch Black)
+    c.fillStyle = '#0a0d14';
+    c.strokeStyle = '#64748b';
+    c.lineWidth = 1.2;
+
+    c.beginPath();
+    c.moveTo(0, -paddle.h * 0.9);
+    c.lineTo(12, -paddle.h * 0.2);
+    c.lineTo(paddle.w * 0.5, paddle.h * 0.3);
+    c.lineTo(paddle.w * 0.42, paddle.h * 0.9);
+    c.lineTo(8, paddle.h * 0.6);
+    c.lineTo(0, paddle.h * 0.8);
+    c.lineTo(-8, paddle.h * 0.6);
+    c.lineTo(-paddle.w * 0.42, paddle.h * 0.9);
+    c.lineTo(-paddle.w * 0.5, paddle.h * 0.3);
+    c.lineTo(-12, -paddle.h * 0.2);
+    c.closePath();
+    c.fill();
+    c.stroke();
+
+    // Red Cockpit Visor
+    c.fillStyle = '#ff0033';
+    c.shadowColor = '#ff0033';
+    c.shadowBlur = 8;
+    c.beginPath();
+    c.ellipse(0, -2, 4, 8, 0, 0, Math.PI * 2);
+    c.fill();
+
+    // Metallic Highlights
+    c.fillStyle = '#cbd5e1';
+    c.shadowBlur = 0;
+    c.fillRect(-paddle.w * 0.4, 0, 2, 6);
+    c.fillRect(paddle.w * 0.4 - 2, 0, 2, 6);
+
+    c.restore();
+  }
+
+  function draw(){
+    c.save();
+    if(shake > 0.2){
+      c.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+    }
+
+    // Space Background
+    c.fillStyle = '#030408';
+    c.fillRect(0, 0, W, H);
+
+    // Stars
+    for(const s of stars){
+      c.fillStyle = '#e2e8f0';
+      c.globalAlpha = s.a;
+      c.beginPath();
+      c.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.globalAlpha = 1;
+
+    // Ships
+    for(const s of ships) if(s.alive) drawShip(s);
+
+    // Paddle
+    drawPaddle();
+
+    // Balls
+    for(const b of balls){
+      // Trail
+      c.fillStyle = 'rgba(255, 34, 68, 0.25)';
+      c.beginPath();
+      c.arc(b.x - b.vx * 1.5, b.y - b.vy * 1.5, b.r * 1.3, 0, Math.PI * 2);
+      c.fill();
+
+      // Ball Body
+      c.fillStyle = '#ffffff';
+      c.shadowColor = '#ff3355';
+      c.shadowBlur = 12;
+      c.beginPath();
+      c.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      c.fill();
+      c.shadowBlur = 0;
+    }
+
+    // Rings
+    for(const r of rings){
+      c.globalAlpha = Math.max(0, r.life / r.maxLife);
+      c.strokeStyle = r.color;
+      c.lineWidth = 2;
+      c.beginPath();
+      c.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+      c.stroke();
+    }
+    c.globalAlpha = 1;
+
+    // Particles
+    for(const p of particles){
+      c.globalAlpha = Math.max(0, p.life / p.maxLife);
+      c.fillStyle = p.color;
+      c.beginPath();
+      c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.globalAlpha = 1;
+
+    c.restore();
+  }
+
+  function loop(t){
+    const dt = Math.min(2.0, (t - last) / 16.67 || 1);
+    last = t;
+    if(running) update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  reset();
+  last = performance.now();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
