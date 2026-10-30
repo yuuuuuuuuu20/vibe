@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BIO HEALER</title>
+<style>
+:root{--site-primary:#6dedd0;--site-secondary:#172a43;--site-background:#07111f;--site-on-primary:#061a1b;--site-on-secondary:#eaf6ff;--site-on-background:#eaf6ff;--site-font-body:Inter,"Pretendard","Noto Sans KR",system-ui,sans-serif;--site-font-heading:Inter,"Pretendard","Noto Sans KR",system-ui,sans-serif;--site-heading-scale:1;--site-spacing-scale:1;--site-radius-scale:1;--site-decoration-opacity:1;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--site-background);color:var(--site-on-background);font-family:var(--site-font-body);overflow:hidden}#app{min-height:100vh;width:100%;background-color:var(--site-background);position:relative;overflow:hidden}.ambient{position:absolute;inset:0;pointer-events:none;opacity:var(--site-decoration-opacity);background:radial-gradient(ellipse at 70% 20%,#173d53 0,transparent 42%),radial-gradient(ellipse at 12% 90%,#182d50 0,transparent 42%)}button{font:inherit;cursor:pointer;border:0}.top{height:68px;padding:0 30px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16;position:relative;z-index:3;background:#081421cc;backdrop-filter:blur(14px)}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.14em}.logo{width:34px;height:34px;border:1px solid #6dedd088;border-radius:11px;display:grid;place-items:center;color:#6dedd0;box-shadow:0 0 22px #6dedd033}.brand small{display:block;font-size:9px;letter-spacing:.24em;color:#7f9bb1;font-weight:600;margin-top:3px}.topright{display:flex;gap:18px;align-items:center;color:#9bb3c8;font-size:11px;letter-spacing:.12em}.pill{border:1px solid #6dedd044;color:#6dedd0;border-radius:99px;padding:7px 12px;font-size:10px}.screen{position:relative;z-index:1;height:calc(100vh - 68px);min-height:600px}.intro{max-width:1180px;margin:auto;padding:58px 34px 30px}.eyebrow{color:#6dedd0;font-size:10px;letter-spacing:.28em;font-weight:800}.intro h1{font-size:clamp(38px,6vw,70px);line-height:.98;letter-spacing:-.055em;margin:16px 0 14px;font-weight:900}.intro h1 span{color:#6dedd0}.intro p{color:#9db1c5;line-height:1.7;max-width:550px;font-size:14px}.cases{max-width:1180px;margin:24px auto;padding:0 34px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.case{position:relative;min-height:255px;border:1px solid #ffffff20;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#142b40,#101c31);padding:24px;display:flex;flex-direction:column;justify-content:flex-end;transition:.25s;cursor:pointer}.case:hover{transform:translateY(-5px);border-color:#6dedd0aa;box-shadow:0 18px 50px #0008}.case:before{content:"";position:absolute;inset:0;opacity:.8;background:radial-gradient(circle at 78% 30%,#d94e6244,transparent 30%),linear-gradient(90deg,#0a1523 5%,transparent 100%)}.case:nth-child(2):before{background:radial-gradient(circle at 78% 30%,#4ba8c655,transparent 30%),linear-gradient(90deg,#0a1523 5%,transparent 100%)}.orb{position:absolute;right:9%;top:15%;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffb0a0,#c83c58 42%,#651e3b 72%,#24172d);box-shadow:inset -18px -20px 30px #130c24,0 0 65px #e94e5b44}.case:nth-child(2) .orb{background:radial-gradient(circle at 35% 30%,#b8ffe9,#43b99d 42%,#17576a 72%,#111b37);box-shadow:inset -18px -20px 30px #071a29,0 0 65px #43d8bb44}.orb:after{content:"";position:absolute;inset:24%;border:1px solid #ffffff55;border-radius:50%;box-shadow:0 0 0 14px #ffffff0b,0 0 0 29px #ffffff0a}.casecode{font-size:10px;color:#6dedd0;letter-spacing:.2em;position:relative}.case h2{font-size:25px;margin:9px 0 5px;position:relative}.case p{font-size:12px;color:#a7b8c8;margin:0;position:relative}.casefoot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;position:relative;color:#6dedd0;font-size:11px}.start{background:#6dedd0;color:#061a1b;border-radius:99px;padding:11px 18px;font-weight:900;font-size:11px}.footnote{max-width:1180px;margin:10px auto;padding:0 34px;color:#60778c;font-size:10px}
+.game{display:none;grid-template-columns:minmax(0,1fr) 300px;height:100%;padding:18px;gap:16px}.view{position:relative;border:1px solid #ffffff20;border-radius:22px;overflow:hidden;background:#160e20;min-height:0}.view canvas{width:100%;height:100%;display:block}.hudtop{position:absolute;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;pointer-events:none}.hudtag{background:#071421bb;border:1px solid #ffffff22;padding:10px 13px;border-radius:12px;font-size:10px;letter-spacing:.13em;backdrop-filter:blur(8px)}.hudtag b{color:#6dedd0}.centerhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);background:#071421dd;border:1px solid #6dedd055;border-radius:99px;padding:12px 18px;color:#d9e9f3;font-size:11px;white-space:nowrap}.side{border:1px solid #ffffff1c;background:#0d1b2b;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:18px;overflow:auto}.sidetop{display:flex;justify-content:space-between;align-items:center}.sidetop span{font-size:10px;color:#6dedd0;letter-spacing:.18em}.sidetop button{background:transparent;color:#8199ac;font-size:18px}.side h2{font-size:21px;margin:0}.muted{color:#8299ad;font-size:12px;line-height:1.6}.stat{margin-top:5px}.statline{display:flex;justify-content:space-between;font-size:10px;color:#91a7b8;margin-bottom:7px}.bar{height:5px;background:#ffffff13;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#6dedd0;width:100%;transition:width .3s}.sectionlabel{font-size:9px;color:#69859a;letter-spacing:.2em;margin-bottom:9px}.clues{display:grid;gap:8px}.clue{padding:10px;border:1px solid #ffffff16;border-radius:10px;font-size:11px;color:#7891a5}.clue.found{border-color:#6dedd055;color:#c4f8e9;background:#6dedd00b}.objective{padding:13px;border-radius:12px;background:#14283b;border:1px solid #6dedd033;font-size:12px;line-height:1.6}.action{background:#6dedd0;color:#061a1b;border-radius:12px;padding:13px;font-weight:900;font-size:12px}.action:disabled{opacity:.3;cursor:not-allowed}.secondary{background:#1a3045;color:#c5d7e5;border:1px solid #ffffff18;border-radius:12px;padding:11px;font-size:11px}.keys{font-size:10px;color:#688196;line-height:1.8;margin-top:auto}.modal{position:absolute;inset:0;background:#020811cc;z-index:5;display:none;place-items:center;padding:20px;backdrop-filter:blur(9px)}.modalbox{width:min(520px,100%);border:1px solid #6dedd055;background:#102136;border-radius:22px;padding:28px;box-shadow:0 25px 90px #000a}.modalbox h2{font-size:25px;margin:8px 0}.modalbox p{color:#9db2c4;font-size:13px;line-height:1.7}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.choice{background:#1b344a;border:1px solid #ffffff20;color:#d9e8f2;border-radius:12px;padding:14px;text-align:left;font-size:12px}.choice.selected{border-color:#6dedd0;background:#17413f}.treatarea{height:130px;border:1px solid #ffffff20;border-radius:14px;margin:16px 0;position:relative;overflow:hidden;background:radial-gradient(circle,#286e68,#12283b 70%)}.target{position:absolute;width:38px;height:38px;border:2px solid #a7ffe8;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 0 25px #6dedd0;cursor:pointer}.target:after{content:"";position:absolute;inset:8px;background:#b7ffea;border-radius:50%}.mobilecontrols{display:none}
+@media(max-width:850px){body{overflow:auto}.screen{height:auto;min-height:calc(100vh - 68px)}.cases{grid-template-columns:1fr}.intro{padding-top:35px}.game{grid-template-columns:1fr;height:auto;min-height:calc(100vh - 68px);padding:10px}.view{height:58vh;min-height:360px}.side{min-height:350px}.top{padding:0 16px}.topright{gap:8px}.case{min-height:220px}.orb{width:125px;height:125px}.keys{display:none}}
+</style></head>
+<body><div id="app"><div class="ambient"></div><header class="top"><div class="brand"><div class="logo">✣</div><div>BIO HEALER<small>THE INNER MYSTERY</small></div></div><div class="topright"><span>MICRO EXPLORATION UNIT</span><span class="pill">● SYSTEM ONLINE</span></div></header>
+<section class="screen" id="selectScreen"><div class="intro"><div class="eyebrow">// CASE ARCHIVE · 01</div><h1>THE BODY IS A<br><span>WORLD UNKNOWN.</span></h1><p>환자의 몸속으로 들어가 감춰진 단서를 추적하고, 질병의 미스터리를 해결하세요. 당신의 탐사가 한 사람의 내일을 바꿉니다.</p></div><div class="cases"><article class="case" onclick="startCase(0)"><div class="orb"></div><div class="casecode">CASE 001 · ACTIVE</div><h2>사라진 면역 신호</h2><p>원인 불명의 고열. 혈관 깊은 곳에서 이상 신호가 포착됐다.</p><div class="casefoot"><span>혈관 구역 · 난이도 NORMAL</span><button class="start">탐사 시작 ↗</button></div></article><article class="case" onclick="startCase(1)"><div class="orb"></div><div class="casecode">CASE 002 · CLASSIFIED</div><h2>잠들지 않는 폐</h2><p>숨이 차오르는 환자. 폐포 사이에 낯선 흔적이 남아 있다.</p><div class="casefoot"><span>폐포 구역 · 난이도 NORMAL</span><button class="start">탐사 시작 ↗</button></div></article></div><div class="footnote">FICTIONAL BIOTECH ADVENTURE · 본 게임은 가상 시나리오이며 실제 의료 진단이나 치료를 제공하지 않습니다.</div></section>
+<section class="screen game" id="gameScreen"><div class="view"><canvas id="world"></canvas><div class="hudtop"><div class="hudtag">ZONE / <b id="zoneName">VASCULAR NETWORK</b></div><div class="hudtag">BIO-SCAN <b id="scanStatus">READY</b></div></div><div class="centerhint" id="hint">W A S D 로 이동 · 빛나는 흔적에 다가가 E 키</div><div class="modal" id="modal"><div class="modalbox" id="modalContent"></div></div></div><aside class="side"><div class="sidetop"><span>FIELD MONITOR</span><button onclick="backHome()">×</button></div><div><h2 id="caseTitle">사라진 면역 신호</h2><p class="muted" id="caseDesc">혈관 깊은 곳에서 사라진 면역 신호의 흔적을 추적하세요.</p></div><div class="stat"><div class="statline"><span>탐사 드론 에너지</span><b id="energyText">100%</b></div><div class="bar"><i id="energyBar"></i></div></div><div><div class="sectionlabel">DISCOVERED CLUES <span id="clueCount">0 / 3</span></div><div class="clues" id="clueList"><div class="clue">◌ 미확인 생체 흔적</div><div class="clue">◌ 세포 반응 데이터</div><div class="clue">◌ 이상 신호의 근원</div></div></div><div><div class="sectionlabel">CURRENT OBJECTIVE</div><div class="objective" id="objective">주변을 탐색해 빛나는 단서 3개를 찾아내세요.</div></div><button class="action" id="nextAction" disabled onclick="openDeduction()">단서 분석하기</button><button class="secondary" onclick="scanPulse()">◎ 바이오 스캔 (Q)</button><div class="keys">조작법<br>W A S D / 방향키 : 이동<br>E : 단서 조사 및 상호작용<br>Q : 바이오 스캔<br>빛나는 흔적을 따라가세요.</div></aside></section></section></div>
+<script>
+const canvas=document.getElementById('world'),ctx=canvas.getContext('2d');let W=900,H=600,raf=0,keys={},player={x:110,y:300},clues=[],found=[],energy=100,caseId=0,mode='explore',scan=0,particles=[],last=0;
+const cases=[{title:'사라진 면역 신호',desc:'혈관 깊은 곳에서 면역세포들이 보내던 신호가 끊겼다. 세 개의 흔적을 찾아 원인을 밝혀라.',zone:'VASCULAR NETWORK',clues:['손상된 세포막','낯선 단백질 잔류물','신호를 차단하는 군집'],cause:'미확인 단백질 군집이 면역 신호 전달을 방해하고 있다.',treat:'신호 복구 나노 펄스'},{title:'잠들지 않는 폐',desc:'폐포 곳곳에서 산소 교환이 불안정하다. 이상 반응의 근원을 추적하라.',zone:'ALVEOLAR FIELD',clues:['탁해진 폐포 표면','비정상 점액 흔적','산소 교환 교란 신호'],cause:'가상의 염증 유발 물질이 폐포 표면에 축적됐다.',treat:'클린 에어로졸 캡슐'}];
+function resize(){let r=canvas.getBoundingClientRect();let d=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=W*d;canvas.height=H*d;ctx.setTransform(d,0,0,d,0,0)}window.addEventListener('resize',resize);
+function startCase(id){resize();caseId=id;let c=cases[id];document.getElementById('selectScreen').style.display='none';document.getElementById('gameScreen').style.display='grid';document.getElementById('caseTitle').textContent=c.title;document.getElementById('caseDesc').textContent=c.desc;document.getElementById('zoneName').textContent=c.zone;document.getElementById('objective').textContent='주변을 탐색해 빛나는 단서 3개를 찾아내세요.';found=[];energy=100;player={x:90,y: H/2};clues=[{x:W*.31,y:H*.28},{x:W*.58,y:H*.68},{x:W*.82,y:H*.34}].map((p,i)=>({...p,label:c.clues[i],got:false,phase:Math.random()*6}));particles=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,v:Math.random()*.5+.15,a:Math.random()*6}));document.getElementById('clueList').innerHTML=c.clues.map((x)=>`<div class="clue">◌ ${x}</div>`).join('');document.getElementById('clueCount').textContent='0 / 3';document.getElementById('nextAction').disabled=true;document.getElementById('hint').textContent='W A S D 로 이동 · 빛나는 흔적에 다가가 E 키';resize();cancelAnimationFrame(raf);last=0;raf=requestAnimationFrame(loop)}
+function backHome(){cancelAnimationFrame(raf);document.getElementById('gameScreen').style.display='none';document.getElementById('selectScreen').style.display='block';closeModal()}
+function drawCell(x,y,s,alpha=1){ctx.save();ctx.translate(x,y);ctx.globalAlpha=alpha;let g=ctx.createRadialGradient(-s*.25,-s*.3,1,0,0,s);g.addColorStop(0,'#ffb0a5');g.addColorStop(.35,'#d94c65');g.addColorStop(.8,'#8b294d');g.addColorStop(1,'#37172f');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,0,s*1.25,s*.72,Math.sin(x*.01)*.2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ff9eaa44';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#571c3c88';ctx.beginPath();ctx.ellipse(0,0,s*.43,s*.25,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+function loop(t){let dt=Math.min((t-last)/16||1,2);last=t;draw(dt,t);raf=requestAnimationFrame(loop)}
+function draw(dt,t){ctx.clearRect(0,0,W,H);let bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#321329');bg.addColorStop(.5,'#511b37');bg.addColorStop(1,'#17162f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+// vascular walls
+ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='#e45b75';ctx.lineWidth=90;ctx.beginPath();ctx.moveTo(-50,H*.18);ctx.bezierCurveTo(W*.25,H*.03,W*.45,H*.4,W*.65,H*.2);ctx.bezierCurveTo(W*.82,H*.05,W*.88,H*.5,W+50,H*.36);ctx.stroke();ctx.strokeStyle='#ff8b9a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-50,H*.18);ctx.bezierCurveTo(W*.25,H*.03,W*.45,H*.4,W*.65,H*.2);ctx.bezierCurveTo(W*.82,H*.05,W*.88,H*.5,W+50,H*.36);ctx.stroke();ctx.restore();
+particles.forEach(p=>{p.x-=p.v*dt*1.8;if(p.x<0)p.x=W;p.y+=Math.sin(t*.001+p.a)*.15;ctx.fillStyle='#ffb6c466';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});for(let i=0;i<8;i++){let x=((i*173+t*.012)%(W+220))-80,y=H*(.13+(i%4)*.23)+Math.sin(t*.0007+i)*20;drawCell(x,y,22+(i%3)*8,.75)}
+clues.forEach((c,i)=>{if(c.got)return;let pulse=1+Math.sin(t*.004+c.phase)*.12;ctx.save();ctx.translate(c.x,c.y);ctx.globalAlpha=.7;ctx.strokeStyle='#6dedd0';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,0,24*pulse,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.2;ctx.fillStyle='#6dedd0';ctx.beginPath();ctx.arc(0,0,18*pulse,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;ctx.fillStyle='#b8ffed';ctx.shadowColor='#6dedd0';ctx.shadowBlur=20;ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();ctx.restore()});
+// player drone
+ctx.save();ctx.translate(player.x,player.y);ctx.rotate(Math.sin(t*.002)*.08);ctx.shadowColor='#6dedd0';ctx.shadowBlur=22;ctx.fillStyle='#a6ffea';ctx.beginPath();ctx.moveTo(0,-15);ctx.lineTo(13,0);ctx.lineTo(0,15);ctx.lineTo(-13,0);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#123b48';ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#a6ffea88';ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(-35,0);ctx.moveTo(20,0);ctx.lineTo(35,0);ctx.stroke();ctx.restore();
+if(scan>0){ctx.save();ctx.strokeStyle='#8ffff0';ctx.globalAlpha=scan/50;ctx.lineWidth=2;ctx.beginPath();ctx.arc(player.x,player.y,(50-scan)*7,0,Math.PI*2);ctx.stroke();ctx.restore();scan-=dt}
+// nearby prompt
+let near=clues.find(c=>!c.got&&Math.hypot(c.x-player.x,c.y-player.y)<55);if(near){document.getElementById('hint').textContent='E 키를 눌러 생체 흔적 조사';}else if(found.length<3){document.getElementById('hint').textContent='W A S D 로 이동 · 빛나는 흔적을 찾아보세요';}
+}
+function move(){if(mode!=='explore')return;let dx=0,dy=0;if(keys.w||keys.ArrowUp)dy--;if(keys.s||keys.ArrowDown)dy++;if(keys.a||keys.ArrowLeft)dx--;if(keys.d||keys.ArrowRight)dx++;let l=Math.hypot(dx,dy)||1;player.x=Math.max(28,Math.min(W-28,player.x+dx/l*3.3));player.y=Math.max(28,Math.min(H-28,player.y+dy/l*3.3));if(dx||dy){energy=Math.max(0,energy-.003);document.getElementById('energyText').textContent=Math.floor(energy)+'%';document.getElementById('energyBar').style.width=energy+'%'}}
+function interact(){if(mode!=='explore')return;let c=clues.find(c=>!c.got&&Math.hypot(c.x-player.x,c.y-player.y)<58);if(c){c.got=true;found.push(c.label);let idx=clues.indexOf(c);document.querySelectorAll('.clue')[idx].classList.add('found');document.querySelectorAll('.clue')[idx].textContent='✓ '+c.label;document.getElementById('clueCount').textContent=found.length+' / 3';document.getElementById('objective').textContent=found.length===3?'모든 단서를 확보했다. 분석을 시작할 수 있다.':`단서 확보 완료. 남은 흔적 ${3-found.length}개를 더 찾아라.`;if(found.length===3){document.getElementById('nextAction').disabled=false;document.getElementById('hint').textContent='단서 3개 확보 완료 · 우측 분석 버튼을 누르세요';}else document.getElementById('hint').textContent='생체 흔적 데이터 확보 완료';}}
+function scanPulse(){scan=50;document.getElementById('scanStatus').textContent='SCANNING';setTimeout(()=>document.getElementById('scanStatus').textContent='READY',800)}
+function openModal(html){document.getElementById('modalContent').innerHTML=html;document.getElementById('modal').style.display='grid'}function closeModal(){document.getElementById('modal').style.display='none'}
+function openDeduction(){if(found.length<3)return;mode='deduce';let c=cases[caseId];openModal(`<div class="eyebrow">// BIO-ANALYSIS COMPLETE</div><h2>흩어진 단서가<br>하나의 진실로 연결된다.</h2><p>${c.cause}<br><br>수집한 흔적을 종합하면 이상 반응의 근원은 하나의 원인으로 좁혀진다. 이 가설을 바탕으로 치료 장비를 선택하자.</p><button class="action" style="width:100%" onclick="openTreatment()">치료 프로토콜 진입 ↗</button>`)}
+function openTreatment(){let c=cases[caseId];openModal(`<div class="eyebrow">// TREATMENT PROTOCOL</div><h2>치료 장비를 선택하세요</h2><p>원인에 대응하는 가상 생명공학 장비를 선택하고, 안정화 펄스를 정확한 타이밍에 작동시키세요.</p><div class="choices"><button class="choice selected" onclick="chooseTool(this)">✧ ${c.treat}<br><small>원인에 대응하는 맞춤형 프로토콜</small></button><button class="choice" onclick="chooseTool(this)">◈ 면역세포 지원<br><small>방어 반응 활성화</small></button></div><div class="treatarea" id="treatarea"><div class="target" id="target" onclick="hitTarget()"></div></div><p id="treatText">빛나는 코어를 클릭해 안정화 펄스를 발사하세요.</p><button class="action" style="width:100%" onclick="hitTarget()">PULSE 발사</button>`)}function chooseTool(el){document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));el.classList.add('selected')}
+function hitTarget(){let target=document.getElementById('target');if(!target)return;target.style.transform='translate(-50%,-50%) scale(1.8)';target.style.opacity='.3';setTimeout(()=>{openModal(`<div class="eyebrow">// PATIENT STATUS · STABILIZED</div><h2>치료 프로토콜 성공</h2><p>생체 신호가 안정화되고 이상 반응이 감소했습니다. 탐사 데이터가 기록되었습니다.</p><div style="display:flex;gap:10px;margin:20px 0"><div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">${caseId===0?'96':'92'}%</b><br>가상 회복 지수</div><div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">+250</b><br>탐사 데이터</div></div><button class="action" style="width:100%" onclick="finishCase()">결과 확인 및 다음 사건 ↗</button>`);},350)}
+function finishCase(){closeModal();mode='explore';document.getElementById('objective').textContent='사건 해결 완료! 새로운 환자 기록이 해금되었다.';document.getElementById('hint').textContent='MISSION COMPLETE';setTimeout(()=>backHome(),1300)}
+window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(k==='e')interact();if(k==='q')scanPulse()});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);setInterval(()=>{if(document.getElementById('gameScreen').style.display==='grid'&&mode==='explore')move()},16);
+// Keep analysis available; explain the remaining objective instead of presenting a dead button.
+const originalStartCase = startCase;
+startCase = function(id){ originalStartCase(id); document.getElementById('nextAction').disabled = false; };
+const originalOpenDeduction = openDeduction;
+openDeduction = function(){
+  if(found.length < 3){
+    const remaining = 3 - found.length;
+    openModal(`<div class="eyebrow">// ANALYSIS LOCKED</div><h2>아직 단서가 부족해요</h2><p>질병의 원인을 분석하려면 생체 흔적 3개가 필요합니다.<br>현재 ${found.length}개를 찾았어요. 빛나는 흔적을 더 조사해 주세요. (${remaining}개 남음)</p><button class="action" style="width:100%" onclick="closeModal()">탐사 계속하기</button>`);
+    return;
+  }
+  originalOpenDeduction();
+};
+</script>
+<script>
+// Expanded campaign: longer exploration routes, case-specific mysteries and a post-treatment mission.
+let viewWidth=0,cameraOffset=0,aftercareMode=false,followupHits=0;
+const initialStartCase=startCase;
+cases[0].mystery='면역 신호가 사라진 것은 면역세포의 고장이 아니었다. 혈관 벽에 남은 손상 흔적, 낯선 단백질, 그리고 신호를 가로막는 군집이 하나의 경로로 이어진다.';
+cases[1].mystery='폐포의 산소 교환이 흔들리는 이유는 단순한 피로가 아니다. 표면의 변화와 점액 흔적, 반복되는 산소 신호의 공백을 연결해야 한다.';
+cases.push({title:'기억을 잃은 세포들',desc:'조직의 세포들이 서로의 신호를 인식하지 못한다. 끊어진 기억의 조각을 추적하라.',zone:'NEURAL TISSUE',clues:['희미해진 시냅스 흔적','뒤틀린 전달 물질','기억 회로의 빈 구간'],cause:'가상의 신호 교란 물질이 세포 간 전달 경로를 차단하고 있다.',treat:'시냅스 리커넥터',mystery:'서로를 알아보지 못하는 세포들. 세 곳에서 발견한 흔적은 하나의 전달 경로를 가리킨다. 누군가 회로의 연결부를 교란하고 있다.'});
+cases.push({title:'멈춰버린 재생 구역',desc:'상처 주변의 세포 재생이 멈췄다. 회복을 가로막는 정체불명의 물질을 찾아라.',zone:'REGENERATION CORE',clues:['멈춘 세포 분열 흔적','검게 변한 기질 조각','재생 신호 차단막'],cause:'가상의 억제 물질이 재생 신호를 차단하고 세포 분열을 멈추게 했다.',treat:'셀 리페어 나노젤',mystery:'재생 구역은 파괴된 것이 아니라 멈춰 있었다. 세 가지 흔적을 이어 보면 세포가 회복을 시작하지 못하도록 막는 억제 물질의 흐름이 드러난다.'});
+document.querySelector('.cases').insertAdjacentHTML('beforeend',
+ '<article class="case" onclick="startCase(2)"><div class="orb"></div><div class="casecode">CASE 003 · NEW SIGNAL</div><h2>기억을 잃은 세포들</h2><p>세포 사이의 신호가 끊겼다. 사라진 연결의 흔적을 추적하라.</p><div class="casefoot"><span>신경 조직 · 난이도 NORMAL</span><button class="start">탐사 시작 ↗</button></div></article>'+
+ '<article class="case" onclick="startCase(3)"><div class="orb"></div><div class="casecode">CASE 004 · NEW SIGNAL</div><h2>멈춰버린 재생 구역</h2><p>회복을 멈춘 조직. 재생을 가로막는 물질의 정체는?</p><div class="casefoot"><span>재생 코어 · 난이도 NORMAL</span><button class="start">탐사 시작 ↗</button></div></article>');
+document.head.insertAdjacentHTML('beforeend','<style>#selectScreen{overflow-y:auto}.cases{padding-bottom:34px}.case:nth-child(3):before{background:radial-gradient(circle at 78% 30%,#8a6be655,transparent 30%),linear-gradient(90deg,#0a1523 5%,transparent 100%)}.case:nth-child(4):before{background:radial-gradient(circle at 78% 30%,#d9a34b55,transparent 30%),linear-gradient(90deg,#0a1523 5%,transparent 100%)}@media(max-width:850px){#selectScreen{overflow:visible}}</style>');
+function setWorldWidth(){viewWidth=W;W=viewWidth*3.2;}
+startCase=function(id){
+ initialStartCase(id);
+ aftercareMode=false;mode='explore';setWorldWidth();player.x=55;player.y=H*.5;cameraOffset=0;
+ const c=cases[id],spots=(id%2===0)?[{x:W*.48,y:H*.22},{x:W*1.62,y:H*.76},{x:W*2.83,y:H*.36}]:[{x:W*.62,y:H*.78},{x:W*1.72,y:H*.25},{x:W*2.88,y:H*.72}];
+ clues=spots.map((p,i)=>({x:p.x,y:p.y,label:c.clues[i],got:false,phase:Math.random()*6}));
+ particles=Array.from({length:Math.round(90*3.2)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+0.5,v:Math.random()*.5+.15,a:Math.random()*6}));
+ document.getElementById('clueList').innerHTML=c.clues.map(x=>'<div class="clue">◌ '+x+'</div>').join('');
+ document.getElementById('clueCount').textContent='0 / 3';
+ document.getElementById('objective').textContent='긴 혈관 구역을 따라 이동하며 서로 다른 위치의 흔적 3개를 조사하세요.';
+ document.getElementById('nextAction').disabled=true;
+ document.getElementById('nextAction').textContent='단서 분석하기';
+ document.getElementById('hint').textContent='몸속 깊은 곳까지 이동해 단서를 찾아보세요.';
+};
+const originalDraw=draw;
+draw=function(dt,t){cameraOffset=Math.max(0,Math.min(W-viewWidth,player.x-viewWidth*.5));ctx.save();ctx.translate(-cameraOffset,0);originalDraw(dt,t);ctx.restore();};
+window.addEventListener('resize',()=>{if(document.getElementById('gameScreen').style.display==='grid'){resize();viewWidth=W;W=viewWidth*3.2;cameraOffset=Math.max(0,Math.min(W-viewWidth,player.x-viewWidth*.5));}});
+openDeduction=function(){
+ if(found.length<3)return;
+ mode='deduce';
+ const list=found.map((x,i)=>'<div class="objective" style="margin:8px 0"><b style="color:#6dedd0">EVIDENCE 0'+(i+1)+'</b><br>'+x+'</div>').join('');
+ openModal('<div class="eyebrow">// INVESTIGATION · EVIDENCE BOARD</div><h2>흩어진 흔적을 연결하라</h2><p>서로 다른 구역에서 발견한 세 가지 증거다. 단서 하나만으로는 알 수 없었던 질병의 패턴이 서서히 드러난다.</p>'+list+'<button class="action" style="width:100%" onclick="revealMystery()">증거 분석 및 진실 확인 ↗</button>');
+};
+function revealMystery(){const c=cases[caseId];openModal('<div class="eyebrow">// CASE RECONSTRUCTION</div><h2>사건의 퍼즐이 맞춰졌다</h2><p>'+c.mystery+'</p><div class="objective"><b style="color:#6dedd0">추론 결과</b><br>'+c.cause+'</div><p>이제 밝혀낸 원인에 맞는 치료 프로토콜을 선택하자.</p><button class="action" style="width:100%" onclick="openTreatment()">치료 장비 선택하기 ↗</button>');}
+const originalInteract=interact;
+interact=function(){originalInteract();if(aftercareMode&&found.length===2){document.getElementById('clueCount').textContent='2 / 2';document.getElementById('objective').textContent='잔여 이상 신호 2개를 모두 확인했다. 마지막 안정화 작업을 시작하자.';document.getElementById('hint').textContent='후속 흔적 확보 완료';openFollowupTreatment();}};
+const originalHitTarget=hitTarget;
+hitTarget=function(){
+ if(aftercareMode){hitFollowup();return;}
+ const target=document.getElementById('target');if(!target)return;
+ target.style.transform='translate(-50%,-50%) scale(1.8)';target.style.opacity='.3';
+ setTimeout(()=>openModal('<div class="eyebrow">// TREATMENT · FIRST RESPONSE</div><h2>핵심 치료가 적용됐다</h2><p>원인 물질의 활동이 약해지고 주요 생체 신호가 돌아오기 시작했다. 하지만 혈관 깊은 곳에 남은 잔여 반응까지 확인해야 환자의 회복을 마무리할 수 있다.</p><div class="objective"><b style="color:#6dedd0">다음 임무</b><br>치료 이후의 몸속을 다시 탐사해 잔여 이상 신호 2개를 확인하라.</div><button class="action" style="width:100%" onclick="startAftercare()">회복 경과 추적 시작 ↗</button>'),350);
+};
+function startAftercare(){
+ closeModal();aftercareMode=true;mode='explore';found=[];player.x=W-90;player.y=H*.5;
+ clues=[{x:W*1.82,y:H*.25,label:'남아 있는 염증 신호',got:false,phase:1.2},{x:W*.62,y:H*.72,label:'회복을 방해하는 잔여 군집',got:false,phase:3.7}];
+ document.getElementById('clueList').innerHTML=clues.map(x=>'<div class="clue">◌ '+x.label+'</div>').join('');
+ document.getElementById('clueCount').textContent='0 / 2';
+ document.getElementById('objective').textContent='치료 이후에도 남아 있는 이상 신호 2개를 찾아 회복 상태를 확인하세요.';
+ document.getElementById('nextAction').disabled=true;document.getElementById('nextAction').textContent='후속 탐사 진행 중';
+ document.getElementById('hint').textContent='치료 후 잔여 반응을 추적하세요. 이번에는 되돌아가야 합니다.';
+}
+function openFollowupTreatment(){
+ mode='followup';followupHits=0;
+ openModal('<div class="eyebrow">// RECOVERY · FINAL STABILIZATION</div><h2>마지막 안정화 단계</h2><p>잔여 반응의 위치를 확인했다. 회복 신호를 완전히 안정시키려면 코어 펄스를 두 번 정확하게 주입해야 한다.</p><div class="treatarea"><div class="target" onclick="hitFollowup()"></div></div><p id="followText">안정화 펄스를 2회 작동시키세요. (0 / 2)</p><button class="action" style="width:100%" onclick="hitFollowup()">안정화 펄스 발사</button>');
+}
+function hitFollowup(){
+ if(mode!=='followup')return;followupHits++;
+ if(followupHits<2){const p=document.getElementById('followText');if(p)p.textContent='첫 번째 펄스 성공. 한 번 더 작동시키세요. (1 / 2)';const target=document.querySelector('#modal .target');if(target){target.style.left='68%';target.style.top='38%';}return;}
+ mode='result';
+ openModal('<div class="eyebrow">// PATIENT RECOVERY · COMPLETE</div><h2>환자가 회복 단계에 들어섰다</h2><p>잔여 이상 신호까지 안정화했다. 생체 반응이 정상 흐름을 되찾고 탐사 기록이 완성됐다.</p><div style="display:flex;gap:10px;margin:20px 0"><div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">98%</b><br>가상 회복 지수</div><div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">+500</b><br>탐사 데이터</div></div><button class="action" style="width:100%" onclick="finishCase()">환자 회복 확인 · 다음 사건으로 ↗</button>');
+}
+</script>
+<script>
+// Make each evidence site visually distinct and give the scan a useful investigative role.
+const evidenceDrawBase=draw;
+draw=function(dt,t){
+ evidenceDrawBase(dt,t);
+ ctx.save();ctx.translate(-cameraOffset,0);
+ clues.forEach((c,i)=>{
+  if(c.got)return;
+  const pulse=1+Math.sin(t*.003+c.phase)*.08;
+  ctx.save();ctx.translate(c.x,c.y);ctx.globalAlpha=.95;
+  ctx.strokeStyle=['#8fffe2','#ffc98b','#c5b4ff'][i%3];ctx.lineWidth=2;
+  ctx.setLineDash([4,5]);ctx.beginPath();ctx.arc(0,0,31*pulse,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=['#8fffe2','#ffc98b','#c5b4ff'][i%3];ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(['⌁','⌖','◇'][i%3],0,0);
+  ctx.fillStyle='#e9f8ff';ctx.font='10px sans-serif';ctx.fillText(['흔적 A','흔적 B','흔적 C'][i],0,45);
+  ctx.restore();
+ });
+ ctx.restore();
+};
+const scanPulseBase=scanPulse;
+scanPulse=function(){
+ scanPulseBase();
+ const remaining=clues.filter(c=>!c.got);
+ if(!remaining.length)return;
+ const nearest=remaining.reduce((a,b)=>Math.hypot(a.x-player.x,a.y-player.y)<Math.hypot(b.x-player.x,b.y-player.y)?a:b);
+ const dx=nearest.x-player.x,dy=nearest.y-player.y;
+ const direction=Math.abs(dx)>Math.abs(dy)?(dx>0?'앞쪽':'뒤쪽'):(dy>0?'아래쪽':'위쪽');
+ document.getElementById('hint').textContent=`바이오 스캔 분석: 미확인 흔적이 ${direction}에서 감지됩니다.`;
+};
+const interactBase=interact;
+interact=function(){
+ const before=found.length;interactBase();
+ if(found.length>before){
+  const idx=found.length;
+  document.getElementById('hint').textContent=idx===3?'세 증거가 모두 확보됐다. 이제 서로의 연관성을 분석하자.':`증거 ${idx}/3 확보. 스캔(Q)으로 다음 흔적의 방향을 추적할 수 있다.`;
+ }
+};
+</script>
+<script>
+// Replace the repetitive three-glow hunt with three different investigation beats.
+const previousDraw=draw;
+draw=function(dt,t){
+ const hidden=clues.slice(1).map(c=>({c,x:c.x}));hidden.forEach(v=>v.c.x=-10000);previousDraw(dt,t);hidden.forEach(v=>v.c.x=v.x);
+ ctx.save();ctx.translate(-cameraOffset,0);
+ if(!aftercareMode){
+  const a=clues[1],b=clues[2];
+  if(a&&!a.got){
+   ctx.save();ctx.translate(a.x,a.y);
+   ctx.globalAlpha=.8;ctx.strokeStyle='#f0b879';ctx.lineWidth=2;
+   ctx.beginPath();ctx.ellipse(0,0,31,17,-.4,0,Math.PI*2);ctx.stroke();
+   ctx.fillStyle='#b66d62';[-17,0,16].forEach((x,i)=>{ctx.save();ctx.translate(x,Math.sin(t*.002+i)*5);ctx.rotate(i*.7);ctx.fillRect(-5,-5,10,10);ctx.restore()});
+   ctx.fillStyle='#ffe0bd';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('손상된 조직',0,34);ctx.restore();
+  }
+  if(b&&!b.got){
+   ctx.save();ctx.translate(b.x,b.y);ctx.globalAlpha=.85;ctx.strokeStyle='#b8a4ff';ctx.lineWidth=2;
+   for(let i=0;i<3;i++){let ang=t*.0005+i*2.1;let x=Math.cos(ang)*24,y=Math.sin(ang)*17;ctx.beginPath();ctx.moveTo(x-7,y-5);ctx.lineTo(x+7,y+5);ctx.moveTo(x+7,y-5);ctx.lineTo(x-7,y+5);ctx.stroke();}
+   ctx.beginPath();ctx.arc(0,0,35+Math.sin(t*.003)*3,0,Math.PI*2);ctx.setLineDash([2,7]);ctx.stroke();ctx.setLineDash([]);
+   ctx.fillStyle='#d8ceff';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('끊어진 신호',0,48);ctx.restore();
+  }
+ }
+ ctx.restore();
+};
+const priorInteract=interact;
+interact=function(){
+ if(aftercareMode){priorInteract();return;}
+ if(mode!=='explore')return;
+ const near=clues.map((c,i)=>({c,i,d:Math.hypot(c.x-player.x,c.y-player.y)})).filter(x=>!x.c.got&&x.d<78).sort((a,b)=>a.d-b.d)[0];
+ if(!near){document.getElementById('hint').textContent='주변 조직을 조사해 수상한 반응을 찾아보세요.';return;}
+ if(near.i===0){priorInteract();return;}
+ if(near.i===1){document.getElementById('hint').textContent='이 흔적은 손상된 조직이다. Q를 눌러 세포 반응을 분석하세요.';return;}
+ const c=near.c;c.got=true;found.push(c.label);updateInvestigation(near.i,'E');
+ document.getElementById('hint').textContent='끊어진 신호의 잔향을 기록했다. 흩어진 정보가 연결되기 시작한다.';
+};
+function updateInvestigation(index,method){
+ const el=document.querySelectorAll('.clue')[index];if(el){el.classList.add('found');el.textContent='✓ '+clues[index].label;}
+ document.getElementById('clueCount').textContent=found.length+' / 3';
+ document.getElementById('objective').textContent=found.length===3?'세 종류의 증거가 모였다. 이제 사건의 연결고리를 분석하자.':`증거 ${found.length}/3 확보. 각 흔적은 서로 다른 방식으로 조사해야 한다.`;
+ if(found.length===3){document.getElementById('nextAction').disabled=false;document.getElementById('hint').textContent='증거 확보 완료 · 단서 분석하기';}
+}
+const priorScan=scanPulse;
+scanPulse=function(){
+ if(aftercareMode){priorScan();return;}
+ scan=50;document.getElementById('scanStatus').textContent='ANALYZING';
+ const target=clues[1];
+ if(target&&!target.got&&Math.hypot(target.x-player.x,target.y-player.y)<115){
+  target.got=true;found.push(target.label);updateInvestigation(1,'Q');
+  document.getElementById('hint').textContent='세포 반응 분석 완료. 손상된 조직에서 두 번째 증거를 확보했다.';
+ }else{
+  const remaining=clues.filter((c,i)=>!c.got&&i!==1);
+  if(remaining.length){const c=remaining.reduce((a,b)=>Math.hypot(a.x-player.x,a.y-player.y)<Math.hypot(b.x-player.x,b.y-player.y)?a:b);const dx=c.x-player.x,dy=c.y-player.y;document.getElementById('hint').textContent=`스캔 결과: 미확인 반응이 ${Math.abs(dx)>Math.abs(dy)?(dx>0?'진행 방향':'뒤쪽'):(dy>0?'아래쪽':'위쪽')}에서 감지됩니다.`;}
+  else document.getElementById('hint').textContent='모든 주변 반응을 분석했다.';
+ }
+ setTimeout(()=>document.getElementById('scanStatus').textContent='READY',800);
+};
+</script>
+<script>
+// --- Mystery investigation redesign: three different evidence mechanics ---
+const previousMysteryInteract = interact;
+const previousMysteryScan = scanPulse;
+
+function mysteryRecordEvidence(index) {
+  const clue = clues[index];
+  if (!clue || clue.got) return;
+  clue.got = true;
+  if (!found.includes(clue.label)) found.push(clue.label);
+  const item = document.querySelectorAll('#clueList .clue')[index];
+  if (item) {
+    item.classList.add('found');
+    item.textContent = '✓ ' + clue.label;
+  }
+  document.getElementById('clueCount').textContent = found.length + ' / 3';
+  document.getElementById('objective').textContent =
+    found.length === 3
+      ? '세 종류의 증거가 모였다. 증거 보드를 열어 서로의 연관성을 추리하자.'
+      : `증거 ${found.length}/3 확보. 남은 증거는 서로 다른 방식으로 조사해야 한다.`;
+  document.getElementById('hint').textContent =
+    found.length === 3
+      ? '세 증거 확보 완료 · 단서 분석하기'
+      : `증거 확보: ${clue.label}`;
+  if (found.length === 3) {
+    document.getElementById('nextAction').disabled = false;
+    document.getElementById('nextAction').textContent = '증거 보드 열기';
+  }
+}
+
+function showTissueAnalysis() {
+  const options = [
+    { text: '세포막이 손상되어 내부 물질이 새어 나온다', correct: true },
+    { text: '세포가 정상적으로 분열하며 조직을 회복 중이다', correct: false },
+    { text: '산소 공급이 늘어나 세포 활동이 활발해졌다', correct: false }
+  ];
+  openModal(`
+    <div class="eyebrow">// INVESTIGATION 02 · CELL ANALYSIS</div>
+    <h2>손상된 조직을 분석하라</h2>
+    <p>현미경 스캔에서 세포 경계가 불규칙하고 내부 물질이 주변으로 퍼지는 모습이 관찰됐다.<br><br><b style="color:#6dedd0">이 현상을 가장 잘 설명하는 것은?</b></p>
+    <div class="choices" style="grid-template-columns:1fr">
+      ${options.map((o,i)=>`<button class="choice" onclick="answerTissue(${i})">${String.fromCharCode(65+i)}. ${o.text}</button>`).join('')}
+    </div>
+    <p id="mysteryFeedback">관찰 결과를 근거로 판단하세요.</p>
+    <button class="secondary" style="width:100%" onclick="closeModal()">조사 계속하기</button>
+  `);
+}
+function answerTissue(index) {
+  if (index === 0) {
+    closeModal();
+    mysteryRecordEvidence(1);
+  } else {
+    const feedback = document.getElementById('mysteryFeedback');
+    if (feedback) feedback.textContent = '아직 설명이 맞지 않는다. 세포 경계와 주변으로 퍼진 물질을 다시 살펴보자.';
+  }
+}
+
+function showSignalPuzzle() {
+  openModal(`
+    <div class="eyebrow">// INVESTIGATION 03 · SIGNAL RECONSTRUCTION</div>
+    <h2>끊어진 신호의 순서를 복원하라</h2>
+    <p>기록 장치에 세 가지 현상이 남아 있다. 실제로 일어난 순서에 가장 가까운 흐름을 선택하라.</p>
+    <div class="choices" style="grid-template-columns:1fr">
+      <button class="choice" onclick="answerSignal(0)">A. 면역 반응 지연 → 조직 이상 → 신호 전달 교란</button>
+      <button class="choice" onclick="answerSignal(1)">B. 조직 이상 → 신호 전달 교란 → 면역 반응 지연</button>
+      <button class="choice" onclick="answerSignal(2)">C. 신호 전달 교란 → 면역 반응 정상화 → 조직 이상 해소</button>
+    </div>
+    <p id="signalFeedback">흩어진 신호 기록을 연결해 보세요.</p>
+    <button class="secondary" style="width:100%" onclick="closeModal()">기록 다시 살펴보기</button>
+  `);
+}
+function answerSignal(index) {
+  if (index === 1) {
+    closeModal();
+    mysteryRecordEvidence(2);
+  } else {
+    const feedback = document.getElementById('signalFeedback');
+    if (feedback) feedback.textContent = '순서가 맞지 않는다. 먼저 발생한 조직의 변화가 다음 신호에 어떤 영향을 주었는지 생각해 보자.';
+  }
+}
+
+interact = function() {
+  if (aftercareMode) { previousMysteryInteract(); return; }
+  if (mode !== 'explore') return;
+  const nearby = clues.map((c,i)=>({c,i,d:Math.hypot(c.x-player.x,c.y-player.y)}))
+    .filter(v=>!v.c.got && v.d < 82)
+    .sort((a,b)=>a.d-b.d)[0];
+  if (!nearby) {
+    document.getElementById('hint').textContent = '주변을 이동하며 조직, 세포 반응, 신호 기록을 각각 조사하세요.';
+    return;
+  }
+  if (nearby.i === 0) {
+    mysteryRecordEvidence(0);
+    document.getElementById('hint').textContent = '미세한 발광 잔류물을 채취했다. 첫 번째 증거를 확보했다.';
+  } else if (nearby.i === 1) {
+    document.getElementById('hint').textContent = '손상된 조직 근처다. Q 키로 현미경 분석을 시작하세요.';
+  } else {
+    showSignalPuzzle();
+  }
+};
+
+scanPulse = function() {
+  if (aftercareMode) { previousMysteryScan(); return; }
+  if (mode !== 'explore') return;
+  scan = 50;
+  document.getElementById('scanStatus').textContent = 'ANALYZING';
+  const tissue = clues[1];
+  if (tissue && !tissue.got && Math.hypot(tissue.x-player.x,tissue.y-player.y) < 125) {
+    showTissueAnalysis();
+  } else {
+    const remaining = clues.filter((c,i)=>!c.got && i!==1);
+    if (remaining.length) {
+      const target = remaining.reduce((a,b)=>
+        Math.hypot(a.x-player.x,a.y-player.y) < Math.hypot(b.x-player.x,b.y-player.y) ? a : b);
+      const dx=target.x-player.x, dy=target.y-player.y;
+      const direction=Math.abs(dx)>Math.abs(dy)
+        ? (dx>0?'앞쪽':'뒤쪽') : (dy>0?'아래쪽':'위쪽');
+      document.getElementById('hint').textContent =
+        `바이오 스캔: 미확인 증거가 ${direction}에 있습니다. Q는 손상 조직 근처에서 분석 기능을 사용합니다.`;
+    } else {
+      document.getElementById('hint').textContent = '남은 증거가 없습니다. 증거 보드를 열어 추리하세요.';
+    }
+  }
+  setTimeout(()=>{ const el=document.getElementById('scanStatus'); if(el)el.textContent='READY'; },800);
+};
+
+// Update the on-screen instructions to explain the distinct mechanics.
+const mysteryObjective = document.getElementById('objective');
+if (mysteryObjective) mysteryObjective.textContent =
+  '① 발광 잔류물은 E로 채취  ② 손상 조직은 가까이서 Q로 분석  ③ 끊어진 신호는 E로 순서 퍼즐을 해결하세요.';
+const mysteryHint = document.getElementById('hint');
+if (mysteryHint) mysteryHint.textContent =
+  '세 증거는 찾는 방법이 다릅니다 · E: 채취/신호 조사 · Q: 조직 분석';
+</script>
+
+
+<script>
+// FIX: place all three investigation sites inside the actual scrollable world.
+// The previous coordinates multiplied an already-expanded world width, placing
+// evidence B and C far beyond the map's reachable boundary.
+const mysteryStartCaseFixed = startCase;
+startCase = function(id) {
+  mysteryStartCaseFixed(id);
+  const worldWidth = W;
+  const positions = [
+    { x: worldWidth * 0.16, y: H * 0.28 },
+    { x: worldWidth * 0.50, y: H * 0.70 },
+    { x: worldWidth * 0.84, y: H * 0.36 }
+  ];
+  clues.forEach((clue, i) => {
+    clue.x = positions[i].x;
+    clue.y = positions[i].y;
+    clue.got = false;
+  });
+  player.x = 55;
+  player.y = H * 0.5;
+  cameraOffset = 0;
+  found = [];
+  document.getElementById('clueCount').textContent = '0 / 3';
+  document.getElementById('objective').textContent =
+    '왼쪽부터 몸속을 탐사하세요. A는 E로 채취, B는 가까이서 Q로 분석, C는 가까이서 E로 신호 순서를 복원합니다.';
+  document.getElementById('hint').textContent =
+    '이동: WASD · 흔적 A/C 조사: E · 손상 조직 B 분석: Q · Q를 누르면 가까운 B 위치도 안내합니다.';
+};
+
+// Make interaction forgiving so players do not need pixel-perfect positioning.
+interact = function() {
+  if (aftercareMode) { previousMysteryInteract(); return; }
+  if (mode !== 'explore') return;
+  const nearby = clues.map((c, i) => ({ c, i, d: Math.hypot(c.x-player.x, c.y-player.y) }))
+    .filter(v => !v.c.got && v.d < 145)
+    .sort((a,b) => a.d-b.d)[0];
+  if (!nearby) {
+    document.getElementById('hint').textContent =
+      '아직 조사 지점과 거리가 있습니다. 화면을 따라 오른쪽으로 이동해 흔적을 찾아보세요.';
+    return;
+  }
+  if (nearby.i === 0) {
+    mysteryRecordEvidence(0);
+    document.getElementById('hint').textContent = '흔적 A 채취 완료! 오른쪽으로 더 이동해 손상 조직(B)을 찾으세요.';
+  } else if (nearby.i === 1) {
+    document.getElementById('hint').textContent = '손상 조직(B)에 도착했습니다. Q 키를 눌러 현미경 분석을 시작하세요.';
+  } else {
+    showSignalPuzzle();
+  }
+};
+
+scanPulse = function() {
+  if (aftercareMode) { previousMysteryScan(); return; }
+  if (mode !== 'explore') return;
+  scan = 50;
+  document.getElementById('scanStatus').textContent = 'ANALYZING';
+  const tissue = clues[1];
+  const distance = tissue ? Math.hypot(tissue.x-player.x, tissue.y-player.y) : Infinity;
+  if (tissue && !tissue.got && distance < 210) {
+    showTissueAnalysis();
+  } else if (tissue && !tissue.got) {
+    const dx = tissue.x-player.x, dy = tissue.y-player.y;
+    const dir = Math.abs(dx) > Math.abs(dy)
+      ? (dx > 0 ? '오른쪽' : '왼쪽')
+      : (dy > 0 ? '아래쪽' : '위쪽');
+    document.getElementById('hint').textContent =
+      `Q 스캔: 손상 조직(B)이 ${dir}에 있습니다. 그 방향으로 이동한 뒤 Q를 다시 누르세요.`;
+  } else {
+    const signal = clues[2];
+    if (signal && !signal.got) {
+      const dx = signal.x-player.x, dy = signal.y-player.y;
+      const dir = Math.abs(dx) > Math.abs(dy)
+        ? (dx > 0 ? '오른쪽' : '왼쪽')
+        : (dy > 0 ? '아래쪽' : '위쪽');
+      document.getElementById('hint').textContent =
+        `Q 스캔: 마지막 끊어진 신호(C)가 ${dir}에 있습니다. 가까이 가서 E를 누르세요.`;
+    }
+  }
+  setTimeout(() => {
+    const el = document.getElementById('scanStatus');
+    if (el) el.textContent = 'READY';
+  }, 800);
+};
+</script>
+
+
+<script>
+// FINAL SECTION ONLY: correct aftercare coordinates, make residual signals
+// clearly visible, and add a short diagnostic investigation before treatment.
+const finalRecoveryDrawBase = draw;
+draw = function(dt, t) {
+  finalRecoveryDrawBase(dt, t);
+  if (!aftercareMode || mode !== 'explore') return;
+
+  // The base draw already handles the camera transform. Add these markers
+  // in world coordinates using the same camera offset.
+  ctx.save();
+  ctx.translate(-cameraOffset, 0);
+  clues.forEach((c, i) => {
+    if (c.got) return;
+    const pulse = 1 + Math.sin(t * 0.004 + i * 1.7) * 0.13;
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.globalAlpha = 1;
+
+    if (i === 0) {
+      // Orange-red inflammation signal.
+      ctx.shadowColor = '#ff654f';
+      ctx.shadowBlur = 25;
+      ctx.strokeStyle = '#ff9879';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 28 * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#ff765c';
+      for (let n = 0; n < 8; n++) {
+        const a = n * Math.PI / 4 + t * 0.0006;
+        ctx.beginPath();
+        ctx.arc(Math.cos(a) * 17, Math.sin(a) * 17, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#fff0e8';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('염증 신호', 0, 49);
+    } else {
+      // Purple residual cluster.
+      ctx.shadowColor = '#b49aff';
+      ctx.shadowBlur = 25;
+      ctx.strokeStyle = '#c7b2ff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, 29 * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#b99aff';
+      for (let n = 0; n < 6; n++) {
+        const a = n * Math.PI / 3 - t * 0.0007;
+        ctx.save();
+        ctx.translate(Math.cos(a) * 17, Math.sin(a) * 17);
+        ctx.rotate(a);
+        ctx.fillRect(-5, -5, 10, 10);
+        ctx.restore();
+      }
+      ctx.fillStyle = '#f0eaff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('잔여 군집', 0, 49);
+    }
+    ctx.restore();
+  });
+  ctx.restore();
+};
+
+// Correct the two aftercare sites: both must be inside the scrollable world.
+// Start near the right site, then travel left to find the second one.
+const finalRecoveryStartBase = startAftercare;
+startAftercare = function() {
+  finalRecoveryStartBase();
+  clues = [
+    { x: W * 0.73, y: H * 0.30, label: '남아 있는 염증 신호', got: false, phase: 1.2 },
+    { x: W * 0.23, y: H * 0.70, label: '회복을 방해하는 잔여 군집', got: false, phase: 3.7 }
+  ];
+  player.x = W * 0.88;
+  player.y = H * 0.52;
+  cameraOffset = Math.max(0, Math.min(W - viewWidth, player.x - viewWidth * 0.5));
+  found = [];
+  document.getElementById('clueList').innerHTML =
+    '<div class="clue">🟠 남아 있는 염증 신호</div><div class="clue">🟣 회복을 방해하는 잔여 군집</div>';
+  document.getElementById('clueCount').textContent = '0 / 2';
+  document.getElementById('objective').textContent =
+    '주황색 염증 신호와 보라색 잔여 군집을 찾아 조사하세요.';
+  document.getElementById('hint').textContent =
+    '🟠 염증 신호 · 🟣 잔여 군집 | WASD 이동 · E 조사 · Q 방향 스캔';
+};
+
+// Aftercare E interaction is separate from the earlier investigation logic.
+interact = function() {
+  if (!aftercareMode) {
+    previousMysteryInteract();
+    return;
+  }
+  if (mode !== 'explore') return;
+
+  const nearby = clues.map((c, i) => ({
+    c, i, d: Math.hypot(c.x - player.x, c.y - player.y)
+  })).filter(v => !v.c.got && v.d < 155).sort((a, b) => a.d - b.d)[0];
+
+  if (!nearby) {
+    document.getElementById('hint').textContent =
+      '주황색 또는 보라색 표시가 있는 곳까지 이동한 뒤 E를 누르세요. Q로 방향을 확인할 수 있습니다.';
+    return;
+  }
+
+  nearby.c.got = true;
+  found.push(nearby.c.label);
+  const item = document.querySelectorAll('#clueList .clue')[nearby.i];
+  if (item) {
+    item.classList.add('found');
+    item.textContent = '✓ ' + nearby.c.label;
+  }
+  document.getElementById('clueCount').textContent = found.length + ' / 2';
+
+  if (found.length === 1) {
+    document.getElementById('objective').textContent =
+      '잔여 반응 1/2 확인 완료. 다른 색의 신호를 찾아 원인을 비교하세요.';
+    document.getElementById('hint').textContent =
+      '첫 번째 반응을 기록했습니다. Q 스캔으로 나머지 신호의 방향을 찾으세요.';
+  } else {
+    document.getElementById('objective').textContent =
+      '두 잔여 반응을 모두 확보했다. 이제 왜 회복이 완전히 끝나지 않았는지 분석하세요.';
+    document.getElementById('hint').textContent = '잔여 반응 확보 완료 · 원인 분석 시작';
+    startRecoveryDiagnosis();
+  }
+};
+
+// Q always points to the nearest uninvestigated aftercare signal.
+scanPulse = function() {
+  if (!aftercareMode) {
+    previousMysteryScan();
+    return;
+  }
+  if (mode !== 'explore') return;
+  const target = clues.filter(c => !c.got).sort((a, b) =>
+    Math.hypot(a.x-player.x, a.y-player.y) - Math.hypot(b.x-player.x, b.y-player.y)
+  )[0];
+  if (!target) return;
+
+  const dx = target.x - player.x, dy = target.y - player.y;
+  const direction = Math.abs(dx) > Math.abs(dy)
+    ? (dx > 0 ? '오른쪽' : '왼쪽')
+    : (dy > 0 ? '아래쪽' : '위쪽');
+  document.getElementById('scanStatus').textContent = 'ANALYZING';
+  document.getElementById('hint').textContent =
+    `Q 스캔 결과: ${target.label}이(가) ${direction}에 있습니다.`;
+  setTimeout(() => {
+    const el = document.getElementById('scanStatus');
+    if (el) el.textContent = 'READY';
+  }, 800);
+};
+
+// A three-part diagnosis explains why the first treatment was not enough.
+let recoveryDiagnosisStep = 0;
+function startRecoveryDiagnosis() {
+  recoveryDiagnosisStep = 0;
+  showRecoveryDiagnosis();
+}
+function showRecoveryDiagnosis() {
+  mode = 'diagnosis';
+  const stages = [
+    {
+      tag: 'DIAGNOSIS 01 · INFLAMMATION TRACE',
+      title: '염증 반응은 왜 남아 있을까?',
+      desc: '주황색 신호 주변에서 염증 전달 물질이 계속 검출된다. 첫 치료로 원인 물질의 활동은 줄었지만, 이미 퍼진 염증 신호는 바로 사라지지 않은 것으로 보인다.',
+      question: '가장 먼저 확인해야 할 것은?',
+      answers: [
+        '염증 전달 물질이 아직 주변 조직에 남아 있는지',
+        '드론의 이동 속도가 느려졌는지',
+        '정상 세포의 에너지가 증가했는지'
+      ],
+      correct: 0,
+      feedback: '염증 신호가 계속 검출되는지 확인해야 다음 단계의 원인을 추적할 수 있다.'
+    },
+    {
+      tag: 'DIAGNOSIS 02 · RESIDUAL CLUSTER',
+      title: '잔여 군집은 무엇을 방해할까?',
+      desc: '보라색 군집은 손상 부위 주변에 남아 있으며, 회복에 필요한 신호가 조직 안쪽으로 전달되는 것을 약하게 만들고 있다.',
+      question: '이 군집이 회복을 늦추는 방식은?',
+      answers: [
+        '산소를 만들어 세포 활동을 과도하게 높인다',
+        '회복 신호의 전달 경로를 방해한다',
+        '손상된 세포를 즉시 모두 제거한다'
+      ],
+      correct: 1,
+      feedback: '군집이 회복 신호의 길목을 막고 있다. 염증 반응과 함께 살펴봐야 한다.'
+    },
+    {
+      tag: 'DIAGNOSIS 03 · CAUSE RECONSTRUCTION',
+      title: '회복이 늦어진 진짜 이유는?',
+      desc: '두 기록을 연결하자. 처음 치료는 질병의 주요 원인을 억제했지만, 염증 부산물과 신호 전달을 방해하는 잔여 군집까지 제거하지는 못했다.',
+      question: '현재 상태를 가장 잘 설명하는 흐름은?',
+      answers: [
+        '초기 원인 억제 → 염증 부산물 잔류 → 잔여 군집이 회복 신호 차단',
+        '정상 회복 시작 → 산소 증가 → 염증이 새롭게 생성',
+        '면역 기능 완전 정상화 → 잔여 군집 자연 소멸'
+      ],
+      correct: 0,
+      feedback: '초기 치료만으로는 부족했다. 남은 염증 반응을 줄이고 군집을 제거한 뒤 회복 신호를 다시 안정화해야 한다.'
+    }
+  ];
+  const stage = stages[recoveryDiagnosisStep];
+  openModal(`
+    <div class="eyebrow">// ${stage.tag}</div>
+    <h2>${stage.title}</h2>
+    <p>${stage.desc}</p>
+    <div class="objective"><b style="color:#6dedd0">분석 질문</b><br>${stage.question}</div>
+    <div class="choices" style="grid-template-columns:1fr">
+      ${stage.answers.map((answer, i) =>
+        `<button class="choice" onclick="answerRecoveryDiagnosis(${i})">${String.fromCharCode(65+i)}. ${answer}</button>`
+      ).join('')}
+    </div>
+    <p id="recoveryDiagnosisFeedback">관찰한 두 신호를 연결해 판단하세요.</p>
+    <p style="text-align:right;color:#7891a5;font-size:10px">ANALYSIS ${recoveryDiagnosisStep + 1} / 3</p>
+  `);
+}
+function answerRecoveryDiagnosis(index) {
+  const stages = [
+    { correct: 0, feedback: '염증 전달 물질이 남아 있는지 확인해야 한다.' },
+    { correct: 1, feedback: '잔여 군집은 회복 신호의 전달 경로를 방해한다.' },
+    { correct: 0, feedback: '초기 원인은 억제됐지만 염증 부산물과 잔여 군집이 남아 회복을 늦추고 있다.' }
+  ];
+  const stage = stages[recoveryDiagnosisStep];
+  if (index !== stage.correct) {
+    const feedback = document.getElementById('recoveryDiagnosisFeedback');
+    if (feedback) feedback.textContent = '아직 분석이 맞지 않는다. 다시 관찰해 보자. ' + stage.feedback;
+    return;
+  }
+  recoveryDiagnosisStep++;
+  if (recoveryDiagnosisStep < 3) {
+    showRecoveryDiagnosis();
+  } else {
+    openFollowupTreatment();
+  }
+}
+
+// Keep the longer, three-step treatment after the diagnostic sequence.
+openFollowupTreatment = function() {
+  mode = 'followup';
+  followupHits = 0;
+  openModal(`
+    <div class="eyebrow">// RECOVERY · FINAL TREATMENT</div>
+    <h2>회복 프로토콜을 완료하라</h2>
+    <p>원인을 확인했다. 염증을 가라앉히고, 조직을 복구한 뒤, 마지막 생체 신호를 안정화하자.</p>
+    <div class="objective" id="recoveryStep"><b style="color:#6dedd0">STEP 1 · 염증 제거</b><br>남아 있는 염증 반응을 줄인다.</div>
+    <div class="treatarea"><div class="target" id="recoveryTarget" onclick="hitFollowup()"></div></div>
+    <p id="followText">1단계 처치 펄스를 작동시키세요. (0 / 3)</p>
+    <button class="action" style="width:100%" onclick="hitFollowup()">처치 펄스 작동 ↗</button>
+  `);
+};
+hitFollowup = function() {
+  if (mode !== 'followup') return;
+  followupHits++;
+  const steps = [
+    { title: 'STEP 2 · 조직 복구', desc: '염증 반응을 줄였다. 손상 부위에 복구 물질을 전달한다.' },
+    { title: 'STEP 3 · 생체 신호 안정화', desc: '조직 연결이 회복되기 시작했다. 마지막으로 세포 사이의 신호 흐름을 안정화한다.' }
+  ];
+  if (followupHits < 3) {
+    const step = steps[followupHits - 1];
+    const panel = document.getElementById('recoveryStep');
+    if (panel) panel.innerHTML = `<b style="color:#6dedd0">${step.title}</b><br>${step.desc}`;
+    const label = document.getElementById('followText');
+    if (label) label.textContent = `${step.desc} (${followupHits} / 3)`;
+    const target = document.getElementById('recoveryTarget');
+    if (target) {
+      target.style.left = followupHits === 1 ? '28%' : '72%';
+      target.style.top = followupHits === 1 ? '35%' : '65%';
+      target.style.opacity = '1';
+      target.style.transform = 'translate(-50%,-50%)';
+    }
+    return;
+  }
+  mode = 'result';
+  openModal(`
+    <div class="eyebrow">// PATIENT RECOVERY · COMPLETE</div>
+    <h2>환자가 회복 단계에 들어섰다</h2>
+    <p>염증 반응을 줄이고 잔여 군집을 제거한 뒤 생체 신호까지 안정화했다. 이제 조직은 정상적인 회복 흐름을 되찾았다.</p>
+    <div style="display:flex;gap:10px;margin:20px 0">
+      <div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">98%</b><br>가상 회복 지수</div>
+      <div class="objective" style="flex:1"><b style="color:#6dedd0;font-size:24px">+500</b><br>탐사 데이터</div>
+    </div>
+    <button class="action" style="width:100%" onclick="finishCase()">환자 회복 확인 · 다음 사건으로 ↗</button>
+  `);
+};
+</script>
+
+</body></html>
